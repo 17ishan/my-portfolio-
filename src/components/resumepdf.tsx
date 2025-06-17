@@ -18,5 +18,6 @@ export function CoolModeDemo() {
         <Button onClick={handleDownload}>Download Resume</Button>
       {/* </CoolMode> */}
     </div>
+  
   );
 }
