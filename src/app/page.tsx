@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { CoolModeDemo } from "@/components/resumepdf";
+import { SmoothCursor } from "@/components/ui/smooth-cursor";
 
 import {
   Card,
@@ -92,6 +93,8 @@ export default function Page() {
   };
   return (
     <>
+    <SmoothCursor />
+
       <Toaster
         position="top-right"
         reverseOrder={false}
