@@ -1,42 +1,31 @@
 import { IconCloud } from "@/components/magicui/icon-cloud";
 
+// Simple Icons slugs (https://simpleicons.org) for the tools I work with.
 const slugs = [
-  "typescript",
-  "javascript",
-  "dart",
-  "java",
+  "openjdk",
+  "springboot",
   "react",
-  "flutter",
-  "android",
+  "nextdotjs",
+  "javascript",
   "html5",
-  "css3",
+  "css",
+  "tailwindcss",
+  "shadcnui",
+  "capacitor",
   "nodedotjs",
   "express",
-  "nextdotjs",
-  "prisma",
-  "amazonaws",
-  "postgresql",
-  "firebase",
-  "nginx",
-  "vercel",
-  "testinglibrary",
-  "jest",
-  "cypress",
-  "docker",
+  "mysql",
+  "mongodb",
+  "supabase",
+  "razorpay",
   "git",
-  "jira",
   "github",
-  "gitlab",
-  "visualstudiocode",
-  "androidstudio",
-  "sonarqube",
-  "figma",
+  "postman",
+  "vercel",
 ];
 
 export function IconCloudDemo() {
-  const images = slugs.map(
-    (slug) => `https://cdn.simpleicons.org/${slug}/${slug}`,
-  );
+  const images = slugs.map((slug) => `https://cdn.simpleicons.org/${slug}`);
 
   return (
     <div className="relative flex size-full items-center justify-center overflow-hidden">

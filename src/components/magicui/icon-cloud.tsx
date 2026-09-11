@@ -17,6 +17,16 @@ interface IconCloudProps {
   images?: string[];
 }
 
+interface TargetRotation {
+  x: number;
+  y: number;
+  startX: number;
+  startY: number;
+  distance: number;
+  startTime: number;
+  duration: number;
+}
+
 function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3);
 }
@@ -24,21 +34,12 @@ function easeOutCubic(t: number): number {
 export function IconCloud({ icons, images }: IconCloudProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [iconPositions, setIconPositions] = useState<Icon[]>([]);
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [targetRotation, setTargetRotation] = useState<{
-    x: number;
-    y: number;
-    startX: number;
-    startY: number;
-    distance: number;
-    startTime: number;
-    duration: number;
-  } | null>(null);
-const animationFrameRef = useRef<number | null>(null);
-  const rotationRef = useRef(rotation);
+  // Interaction state lives in refs so the animation loop isn't restarted on every mouse move.
+  const rotationRef = useRef({ x: 0, y: 0 });
+  const mousePosRef = useRef({ x: 0, y: 0 });
+  const lastMousePosRef = useRef({ x: 0, y: 0 });
+  const isDraggingRef = useRef(false);
+  const targetRotationRef = useRef<TargetRotation | null>(null);
   const iconCanvasesRef = useRef<HTMLCanvasElement[]>([]);
   const imagesLoadedRef = useRef<boolean[]>([]);
 
@@ -75,8 +76,7 @@ const animationFrameRef = useRef<number | null>(null);
 
             imagesLoadedRef.current[index] = true;
           };
-        }
-         else {
+        } else {
           // Handle SVG icons
           offCtx.scale(0.4, 0.4);
           const svgString = renderToString(item as React.ReactElement);
@@ -125,139 +125,132 @@ const animationFrameRef = useRef<number | null>(null);
     setIconPositions(newIcons);
   }, [icons, images]);
 
+  // Converts a mouse event to canvas pixels (the canvas is scaled down on narrow screens).
+  const toCanvasPoint = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    const rect = canvas?.getBoundingClientRect();
+    if (!canvas || !rect || rect.width === 0) return null;
+    return {
+      x: ((e.clientX - rect.left) * canvas.width) / rect.width,
+      y: ((e.clientY - rect.top) * canvas.height) / rect.height,
+    };
+  };
+
   // Handle mouse events
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const point = toCanvasPoint(e);
+    if (!canvas || !point) return;
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const { x: currentX, y: currentY } = rotationRef.current;
+    const cosX = Math.cos(currentX);
+    const sinX = Math.sin(currentX);
+    const cosY = Math.cos(currentY);
+    const sinY = Math.sin(currentY);
 
-    const ctx = canvasRef.current.getContext("2d");
-    if (!ctx) return;
-
-    iconPositions.forEach((icon) => {
-      const cosX = Math.cos(rotationRef.current.x);
-      const sinX = Math.sin(rotationRef.current.x);
-      const cosY = Math.cos(rotationRef.current.y);
-      const sinY = Math.sin(rotationRef.current.y);
-
+    for (const icon of iconPositions) {
       const rotatedX = icon.x * cosY - icon.z * sinY;
       const rotatedZ = icon.x * sinY + icon.z * cosY;
       const rotatedY = icon.y * cosX + rotatedZ * sinX;
 
-      const screenX = canvasRef.current!.width / 2 + rotatedX;
-      const screenY = canvasRef.current!.height / 2 + rotatedY;
+      const screenX = canvas.width / 2 + rotatedX;
+      const screenY = canvas.height / 2 + rotatedY;
 
-      const scale = (rotatedZ + 200) / 300;
-      const radius = 20 * scale;
-      const dx = x - screenX;
-      const dy = y - screenY;
+      const radius = 20 * ((rotatedZ + 200) / 300);
+      const dx = point.x - screenX;
+      const dy = point.y - screenY;
 
       if (dx * dx + dy * dy < radius * radius) {
+        // Clicked an icon: rotate it to the front instead of starting a drag.
         const targetX = -Math.atan2(
           icon.y,
           Math.sqrt(icon.x * icon.x + icon.z * icon.z),
         );
         const targetY = Math.atan2(icon.x, icon.z);
+        const distance = Math.hypot(targetX - currentX, targetY - currentY);
 
-        const currentX = rotationRef.current.x;
-        const currentY = rotationRef.current.y;
-        const distance = Math.sqrt(
-          Math.pow(targetX - currentX, 2) + Math.pow(targetY - currentY, 2),
-        );
-
-        const duration = Math.min(2000, Math.max(800, distance * 1000));
-
-        setTargetRotation({
+        targetRotationRef.current = {
           x: targetX,
           y: targetY,
           startX: currentX,
           startY: currentY,
           distance,
           startTime: performance.now(),
-          duration,
-        });
+          duration: Math.min(2000, Math.max(800, distance * 1000)),
+        };
         return;
       }
-    });
+    }
 
-    setIsDragging(true);
-    setLastMousePos({ x: e.clientX, y: e.clientY });
+    isDraggingRef.current = true;
+    lastMousePosRef.current = { x: e.clientX, y: e.clientY };
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (rect) {
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      setMousePos({ x, y });
-    }
+    const point = toCanvasPoint(e);
+    if (point) mousePosRef.current = point;
 
-    if (isDragging) {
-      const deltaX = e.clientX - lastMousePos.x;
-      const deltaY = e.clientY - lastMousePos.y;
+    if (isDraggingRef.current) {
+      const deltaX = e.clientX - lastMousePosRef.current.x;
+      const deltaY = e.clientY - lastMousePosRef.current.y;
 
       rotationRef.current = {
         x: rotationRef.current.x + deltaY * 0.002,
         y: rotationRef.current.y + deltaX * 0.002,
       };
 
-      setLastMousePos({ x: e.clientX, y: e.clientY });
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY };
     }
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    isDraggingRef.current = false;
   };
 
-  // Animation and rendering
+  // Animation and rendering; the loop only runs while the canvas is on screen.
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const animate = () => {
+    const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
       const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
-      const dx = mousePos.x - centerX;
-      const dy = mousePos.y - centerY;
+      const dx = mousePosRef.current.x - centerX;
+      const dy = mousePosRef.current.y - centerY;
       const distance = Math.sqrt(dx * dx + dy * dy);
       const speed = 0.003 + (distance / maxDistance) * 0.01;
 
-      if (targetRotation) {
-        const elapsed = performance.now() - targetRotation.startTime;
-        const progress = Math.min(1, elapsed / targetRotation.duration);
+      const target = targetRotationRef.current;
+      if (target) {
+        const elapsed = performance.now() - target.startTime;
+        const progress = Math.min(1, elapsed / target.duration);
         const easedProgress = easeOutCubic(progress);
 
         rotationRef.current = {
-          x:
-            targetRotation.startX +
-            (targetRotation.x - targetRotation.startX) * easedProgress,
-          y:
-            targetRotation.startY +
-            (targetRotation.y - targetRotation.startY) * easedProgress,
+          x: target.startX + (target.x - target.startX) * easedProgress,
+          y: target.startY + (target.y - target.startY) * easedProgress,
         };
 
         if (progress >= 1) {
-          setTargetRotation(null);
+          targetRotationRef.current = null;
         }
-      } else if (!isDragging) {
+      } else if (!isDraggingRef.current) {
         rotationRef.current = {
           x: rotationRef.current.x + (dy / canvas.height) * speed,
           y: rotationRef.current.y + (dx / canvas.width) * speed,
         };
       }
 
-      iconPositions.forEach((icon, index) => {
-        const cosX = Math.cos(rotationRef.current.x);
-        const sinX = Math.sin(rotationRef.current.x);
-        const cosY = Math.cos(rotationRef.current.y);
-        const sinY = Math.sin(rotationRef.current.y);
+      const cosX = Math.cos(rotationRef.current.x);
+      const sinX = Math.sin(rotationRef.current.x);
+      const cosY = Math.cos(rotationRef.current.y);
+      const sinY = Math.sin(rotationRef.current.y);
 
+      iconPositions.forEach((icon, index) => {
         const rotatedX = icon.x * cosY - icon.z * sinY;
         const rotatedZ = icon.x * sinY + icon.z * cosY;
         const rotatedY = icon.y * cosX + rotatedZ * sinX;
@@ -296,17 +289,34 @@ const animationFrameRef = useRef<number | null>(null);
 
         ctx.restore();
       });
-      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    let frame = 0;
+    let running = false;
+    const loop = () => {
+      draw();
+      frame = requestAnimationFrame(loop);
+    };
+    const start = () => {
+      if (running) return;
+      running = true;
+      frame = requestAnimationFrame(loop);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(frame);
+    };
+
+    const observer = new IntersectionObserver(([entry]) =>
+      entry.isIntersecting ? start() : stop(),
+    );
+    observer.observe(canvas);
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      observer.disconnect();
+      stop();
     };
-  }, [icons, images, iconPositions, isDragging, mousePos, targetRotation]);
+  }, [icons, images, iconPositions]);
 
   return (
     <canvas
@@ -317,12 +327,9 @@ const animationFrameRef = useRef<number | null>(null);
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="rounded-lg"
+      className="h-auto w-full max-w-[400px] rounded-lg"
       aria-label="Interactive 3D Icon Cloud"
       role="img"
     />
   );
 }
-
-
-

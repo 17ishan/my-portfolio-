@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useSpring } from "motion/react";
-import { FC, JSX, useEffect, useRef, useState } from "react";
+import { motion, useSpring } from "framer-motion";
+import { FC, ReactElement, useEffect, useRef, useState } from "react";
 
 interface Position {
   x: number;
@@ -9,7 +9,7 @@ interface Position {
 }
 
 export interface SmoothCursorProps {
-  cursor?: JSX.Element;
+  cursor?: ReactElement;
   springConfig?: {
     damping: number;
     stiffness: number;
@@ -80,16 +80,42 @@ const DefaultCursorSVG: FC = () => {
   );
 };
 
+const DEFAULT_SPRING = {
+  damping: 45,
+  stiffness: 400,
+  mass: 1,
+  restDelta: 0.001,
+};
+
+// Only mounts on devices with a precise pointer (mouse/trackpad) and when the
+// visitor hasn't asked for reduced motion, so touch screens never see a stray cursor.
 export function SmoothCursor({
   cursor = <DefaultCursorSVG />,
-  springConfig = {
-    damping: 45,
-    stiffness: 400,
-    mass: 1,
-    restDelta: 0.001,
-  },
+  springConfig = DEFAULT_SPRING,
 }: SmoothCursorProps) {
-  const [isMoving, setIsMoving] = useState(false);
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const finePointer = window.matchMedia("(pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () =>
+      setEnabled(finePointer.matches && !reducedMotion.matches);
+
+    update();
+    finePointer.addEventListener("change", update);
+    reducedMotion.addEventListener("change", update);
+    return () => {
+      finePointer.removeEventListener("change", update);
+      reducedMotion.removeEventListener("change", update);
+    };
+  }, []);
+
+  return enabled ? <Cursor cursor={cursor} springConfig={springConfig} /> : null;
+}
+
+function Cursor({ cursor, springConfig }: Required<SmoothCursorProps>) {
+  const [visible, setVisible] = useState(false);
+  const hasPosition = useRef(false);
   const lastMousePos = useRef<Position>({ x: 0, y: 0 });
   const velocity = useRef<Position>({ x: 0, y: 0 });
   const lastUpdateTime = useRef(Date.now());
@@ -110,6 +136,9 @@ export function SmoothCursor({
   });
 
   useEffect(() => {
+    let rafId = 0;
+    let scaleTimeout: ReturnType<typeof setTimeout> | undefined;
+
     const updateVelocity = (currentPos: Position) => {
       const currentTime = Date.now();
       const deltaTime = currentTime - lastUpdateTime.current;
@@ -127,11 +156,21 @@ export function SmoothCursor({
 
     const smoothMouseMove = (e: MouseEvent) => {
       const currentPos = { x: e.clientX, y: e.clientY };
+
+      if (!hasPosition.current) {
+        // Appear at the pointer instead of flying in from the corner.
+        hasPosition.current = true;
+        cursorX.jump(currentPos.x);
+        cursorY.jump(currentPos.y);
+        lastMousePos.current = currentPos;
+        lastUpdateTime.current = Date.now();
+        setVisible(true);
+        return;
+      }
+
       updateVelocity(currentPos);
 
-      const speed = Math.sqrt(
-        Math.pow(velocity.current.x, 2) + Math.pow(velocity.current.y, 2),
-      );
+      const speed = Math.hypot(velocity.current.x, velocity.current.y);
 
       cursorX.set(currentPos.x);
       cursorY.set(currentPos.y);
@@ -149,18 +188,11 @@ export function SmoothCursor({
         previousAngle.current = currentAngle;
 
         scale.set(0.95);
-        setIsMoving(true);
-
-        const timeout = setTimeout(() => {
-          scale.set(1);
-          setIsMoving(false);
-        }, 150);
-
-        return () => clearTimeout(timeout);
+        clearTimeout(scaleTimeout);
+        scaleTimeout = setTimeout(() => scale.set(1), 150);
       }
     };
 
-    let rafId: number;
     const throttledMouseMove = (e: MouseEvent) => {
       if (rafId) return;
 
@@ -170,18 +202,29 @@ export function SmoothCursor({
       });
     };
 
-    document.body.style.cursor = "none";
+    // Hide when the pointer leaves the window; it reappears at the pointer on return.
+    const handleMouseOut = (e: MouseEvent) => {
+      if (e.relatedTarget) return;
+      hasPosition.current = false;
+      setVisible(false);
+    };
+
+    document.documentElement.classList.add("custom-cursor");
     window.addEventListener("mousemove", throttledMouseMove);
+    document.addEventListener("mouseout", handleMouseOut);
 
     return () => {
       window.removeEventListener("mousemove", throttledMouseMove);
-      document.body.style.cursor = "auto";
+      document.removeEventListener("mouseout", handleMouseOut);
+      document.documentElement.classList.remove("custom-cursor");
       if (rafId) cancelAnimationFrame(rafId);
+      clearTimeout(scaleTimeout);
     };
   }, [cursorX, cursorY, rotation, scale]);
 
   return (
     <motion.div
+      aria-hidden
       style={{
         position: "fixed",
         left: cursorX,
@@ -193,13 +236,7 @@ export function SmoothCursor({
         zIndex: 100,
         pointerEvents: "none",
         willChange: "transform",
-      }}
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 30,
+        opacity: visible ? 1 : 0,
       }}
     >
       {cursor}

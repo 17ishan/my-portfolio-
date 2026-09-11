@@ -1,47 +1,33 @@
-<div align="center">
-<img alt="Portfolio" src="https://github.com/dillionverma/portfolio/assets/16860528/57ffca81-3f0a-4425-b31d-094f61725455" width="90%">
-</div>
+# Ishan Sinha — Freelance Web Developer
 
-# Portfolio [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdillionverma%2Fportfolio)
+Source for my freelance portfolio: <https://my-portfolio-dhey.vercel.app>
 
-Built with next.js, [shadcn/ui](https://ui.shadcn.com/), and [magic ui](https://magicui.design/), deployed on Vercel.
+I build websites, landing pages, React/Next.js web apps and full-stack MERN applications for clients in India and worldwide.
 
-# Features
+## Tech stack
 
-- Setup only takes a few minutes by editing the [single config file](./src/data/resume.tsx)
-- Built using Next.js 14, React, Typescript, Shadcn/UI, TailwindCSS, Framer Motion, Magic UI
-- Includes a blog
-- Responsive for different devices
-- Optimized for Next.js and Vercel
+- [Next.js 15](https://nextjs.org/) (App Router, static export), React, TypeScript
+- [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Magic UI](https://magicui.design/), Framer Motion
+- [Web3Forms](https://web3forms.com/) for the contact form
+- Deployed on [Vercel](https://vercel.com/)
 
-# Getting Started Locally
+## Editing content
 
-1. Clone this repository to your local machine:
+All text, projects, services, FAQ and contact details live in one file: [`src/data/resume.tsx`](./src/data/resume.tsx).
+Items marked `TODO(content)` are placeholders to replace.
 
-   ```bash
-   git clone https://github.com/dillionverma/portfolio
-   ```
+- **Projects:** add an entry to `projects`. Use `category: "internship"` for client/internship work; those are listed first. Put screenshots in `public/posters/`.
+- **Testimonials:** add quotes to `testimonials`; the section stays hidden while it's empty.
+- **Contact form:** submissions go through [Web3Forms](https://web3forms.com/) to the address you register there. Put your access key in `contact.formAccessKey` in `src/data/resume.tsx`. If the key is missing or sending fails, visitors get one-click WhatsApp, Gmail and email-app buttons with their message pre-filled.
 
-2. Move to the cloned directory
+## Running locally
 
-   ```bash
-   cd portfolio
-   ```
+```bash
+pnpm install
+pnpm dev      # http://localhost:3000
+pnpm build    # static export to ./out
+```
 
-3. Install dependencies:
+## License
 
-   ```bash
-   pnpm install
-   ```
-
-4. Start the local Server:
-
-   ```bash
-   pnpm dev
-   ```
-
-5. Open the [Config file](./src/data/resume.tsx) and make changes
-
-# License
-
-Licensed under the [MIT license](https://github.com/dillionverma/portfolio/blob/main/LICENSE.md).
+MIT. Based on [Dillion Verma's portfolio template](https://github.com/dillionverma/portfolio); see [LICENSE](./LICENSE).

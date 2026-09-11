@@ -1,23 +1,28 @@
-import { Button } from "@/components/ui/button";
-// import { CoolMode } from "@/components/magicui/cool-mode";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { DownloadIcon } from "lucide-react";
+import type { VariantProps } from "class-variance-authority";
 
-export function CoolModeDemo() {
-  const handleDownload = () => {
-    const pdfUrl = "/IshanResume.pdf";
-    const link = document.createElement("a");
-    link.href = pdfUrl;
-    link.download = "Ishan-IshanResume.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+type ButtonStyle = VariantProps<typeof buttonVariants>;
 
+export function ResumeDownload({
+  className,
+  variant = "ghost",
+  size = "lg",
+  label = "Download resume",
+}: {
+  className?: string;
+  variant?: ButtonStyle["variant"];
+  size?: ButtonStyle["size"];
+  label?: string;
+}) {
   return (
-    <div className="relative justify-center">
-      {/* <CoolMode> */}
-        <Button onClick={handleDownload}>Download Resume</Button>
-      {/* </CoolMode> */}
-    </div>
-  
+    <a
+      href="/IshanResume.pdf"
+      download="Ishan-Sinha-Resume.pdf"
+      className={cn(buttonVariants({ variant, size }), "gap-2", className)}
+    >
+      <DownloadIcon className="size-4" aria-hidden /> {label}
+    </a>
   );
 }

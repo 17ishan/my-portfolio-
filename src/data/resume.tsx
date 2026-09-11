@@ -1,650 +1,423 @@
-import { Icons } from "../components/icons";
-import { HomeIcon, NotebookIcon } from "lucide-react";
+import { Icons, type IconProps } from "@/components/icons";
+import {
+  BriefcaseIcon,
+  CodeXmlIcon,
+  HomeIcon,
+  LayersIcon,
+  LayoutTemplateIcon,
+  MailIcon,
+  ServerIcon,
+  WrenchIcon,
+  type LucideIcon,
+} from "lucide-react";
+import type { ComponentType, ReactNode } from "react";
+
+// Everything on the site is driven from this file.
+// Items marked "TODO(content)" are placeholders: replace them with your real details.
+
+export type ProjectCategory = "internship" | "personal";
+
+export interface Project {
+  title: string;
+  category: ProjectCategory;
+  /** Company or client the project was built for (internship/client work). */
+  client?: string;
+  href?: string;
+  dates?: string;
+  role: string;
+  /** The goal or problem the project solves. */
+  problem?: string;
+  description: string;
+  /** What was delivered, or the result. */
+  outcome?: string;
+  technologies: string[];
+  links: { type: string; href: string; icon: ReactNode }[];
+  video?: string;
+  /** Lightweight still shown instead of loading the video up front. */
+  poster?: string;
+}
+
+export interface Service {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  deliverables: string[];
+}
+
+export interface WorkItem {
+  company: string;
+  href?: string;
+  /** Text for the link to `href`, e.g. "Certificate". */
+  linkLabel?: string;
+  badges: string[];
+  location: string;
+  title: string;
+  logoUrl: string;
+  start: string;
+  end: string;
+  description: string;
+}
+
+export interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+}
+
+interface Social {
+  name: string;
+  url: string;
+  icon: ComponentType<IconProps>;
+  navbar: boolean;
+}
+
+const services: Service[] = [
+  {
+    title: "Website redesign & fixes",
+    description:
+      "Make an existing site faster, mobile-friendly and modern, or fix the bugs and layout issues holding it back.",
+    icon: WrenchIcon,
+    deliverables: [
+      "Speed & Core Web Vitals",
+      "Mobile & responsive fixes",
+      "UI refresh",
+      "Bug fixes & SEO basics",
+    ],
+  },
+  {
+    title: "Business & landing websites",
+    description:
+      "A professional, responsive website or landing page that explains what you do and turns visitors into enquiries.",
+    icon: LayoutTemplateIcon,
+    deliverables: [
+      "Custom responsive design",
+      "Contact & WhatsApp enquiry forms",
+      "SEO-ready pages",
+      "Domain & hosting setup",
+    ],
+  },
+  {
+    title: "React & Next.js web apps",
+    description:
+      "Interactive web apps, dashboards and single-page apps built with React and Next.js.",
+    icon: CodeXmlIcon,
+    deliverables: [
+      "Dashboards & SPAs",
+      "API integrations",
+      "Reusable components",
+      "Fast, SEO-friendly builds",
+    ],
+  },
+  {
+    title: "Full-stack MERN",
+    description:
+      "Complete applications with a Node.js and Express API, a MongoDB database and a React front end.",
+    icon: ServerIcon,
+    deliverables: [
+      "REST APIs",
+      "MongoDB data models",
+      "Login & admin panels",
+      "Deployment",
+    ],
+  },
+];
+
+const projects: Project[] = [
+  // TODO(content): add your internship/client projects here with category "internship", e.g.
+  // {
+  //   title: "Apple Vision Pro landing page",
+  //   category: "internship",
+  //   client: "Codsoft",
+  //   href: "https://…",
+  //   dates: "Aug 2023",
+  //   role: "Front-end developer",
+  //   problem: "What the client needed…",
+  //   description: "What you built…",
+  //   outcome: "The result…",
+  //   technologies: ["HTML", "CSS", "JavaScript"],
+  //   links: [{ type: "Website", href: "https://…", icon: <Icons.globe className="size-3" /> }],
+  //   poster: "/posters/your-screenshot.webp",
+  // },
+  // Add a `dates` field to any project below if you want dates shown on its card.
+  {
+    title: "Home Review",
+    category: "internship",
+    href: "https://homereview.co.nz/",
+    role: "Full-stack & mobile development",
+    problem:
+      "Turn room-by-room walkthrough videos into property condition reports automatically.",
+    description:
+      "An AI-driven video inspection web and mobile app that analyses walkthrough recordings to generate property condition reports and tenant ratings.",
+    outcome:
+      "Dynamic pricing engine, portable AI-based tenant ratings across the tenancy lifecycle, tenant report generation, digital NDA signing and a cross-platform mobile app built with Capacitor.",
+    technologies: ["Java", "Spring Boot", "React", "Capacitor", "REST APIs"],
+    links: [
+      {
+        type: "Website",
+        href: "https://homereview.co.nz/",
+        icon: <Icons.globe className="size-3" />,
+      },
+    ],
+    poster: "/posters/homereview.webp",
+  },
+  {
+    title: "ICOSA",
+    category: "internship",
+    href: "https://icosaonline.com/",
+    role: "Full-stack development",
+    problem:
+      "Run research-backed accreditation for K-12 schools in 15+ countries online.",
+    description:
+      "A global school accreditation platform offering dual-assessment certification for K-12 schools.",
+    outcome:
+      "Four role-based portals (School, Counsellor, Admin, Super Admin) connected to Spring Boot REST APIs, with secure Razorpay payments for accreditation fees.",
+    technologies: ["Java", "Spring Boot", "React", "Razorpay API"],
+    links: [
+      {
+        type: "Website",
+        href: "https://icosaonline.com/",
+        icon: <Icons.globe className="size-3" />,
+      },
+    ],
+    poster: "/posters/icosa.webp",
+  },
+  {
+    title: "T-FOMS",
+    category: "internship",
+    client: "Telangana Forest Department",
+    href: "https://tfoms.pages.dev/",
+    role: "Backend & mobile development",
+    problem: "Digitise forest-offence case management across 8 officer roles.",
+    description:
+      "A role-based forest offence case management system for recording, reviewing and approving cases.",
+    outcome:
+      "Spring Boot REST APIs for offence recording, case review and approval workflows, plus a Capacitor mobile app for field officers to log offences and capture evidence on-site.",
+    technologies: ["Java", "Spring Boot", "Capacitor", "REST APIs"],
+    links: [
+      {
+        type: "Website",
+        href: "https://tfoms.pages.dev/",
+        icon: <Icons.globe className="size-3" />,
+      },
+    ],
+    poster: "/posters/tfoms.webp",
+  },
+  {
+    title: "CallEase",
+    category: "personal",
+    href: "https://video-calling-web-app-call-ease-seven.vercel.app/",
+    dates: "Mar 2025 – Apr 2025",
+    role: "Solo project: design & development",
+    problem:
+      "Start a video call straight from the browser, with no app to install.",
+    description:
+      "A responsive audio/video calling web app built with React and Tailwind CSS on top of a video-calling API.",
+    outcome:
+      "Call start and end, mute/unmute and live UI updates with React Hooks and Context API, working on desktop and mobile.",
+    technologies: ["React", "Tailwind CSS", "Vite", "Video API"],
+    // The source repo (github.com/17ishan/video-calling-web-app-CallEase.-) no longer exists, so only the live site is linked.
+    links: [
+      {
+        type: "Website",
+        href: "https://video-calling-web-app-call-ease-seven.vercel.app/",
+        icon: <Icons.globe className="size-3" />,
+      },
+    ],
+    video: "/callEase.mp4",
+    poster: "/posters/callEase.webp",
+  },
+];
+
+const work: WorkItem[] = [
+  {
+    company: "Vidyayatan Technologies",
+    badges: [],
+    location: "On-site, Bhopal",
+    title: "Software Development Intern",
+    logoUrl: "/vidyayatanLogo.jpg",
+    start: "Feb 2026",
+    end: "Jun 2026",
+    description:
+      "Built a real-time dashboard for internal use so users could view live data and interact with system features. Fixed integration issues between the frontend and backend to keep data flowing reliably, and built reusable UI components and application state, collaborating with the team through Git-based version control.",
+  },
+  {
+    company: "MP Police",
+    href: "https://www.linkedin.com/posts/ishan-sinha-858097230_mppoliceinternship-lawenforcement-professionalgrowth-activity-7071545684755103744-jqyk?utm_source=share&utm_medium=member_desktop&rcm=ACoAADmtTQQBFr8x9Ng3zT8cOYAZjLAwp5kIJys",
+    linkLabel: "LinkedIn post",
+    badges: [],
+    location: "Bhopal, Madhya Pradesh",
+    title: "Cyber Security Intern",
+    logoUrl: "/MPpoliceLogo.png",
+    start: "May 2022",
+    end: "Apr 2023",
+    description:
+      "Selected among 200 of 500 applicants for an internship focused on cyber-security awareness and fraud detection. Worked with the authorities to analyse areas prone to cyber fraud, learning how different fraud types work and how to prevent them.",
+  },
+];
+
+const testimonials: Testimonial[] = [
+  // TODO(content): add 1–3 short quotes from clients or internship mentors. The section stays hidden while this is empty.
+  // { quote: "Ishan rebuilt our website in two weeks…", name: "Name Surname", role: "Owner, Company" },
+];
 
 export const DATA = {
   name: "Ishan Sinha",
   initials: "IS",
-  url: "https://www.linkedin.com/in/ishan-sinha-858097230/",
+  // TODO(content): switch to your custom domain once you have one.
+  url: "https://my-portfolio-dhey.vercel.app",
   location: "Bhopal, India",
-  locationLink: "https://www.google.com/maps/place/sanfrancisco",
+  role: "Freelance Web Developer",
   description:
-    "Software Engineer, I love building things and helping people. Very active on LinkedIn.",
+    "Freelance web developer. I build fast, modern websites and web apps for businesses in India and worldwide.",
   summary:
-    "Hey, I'm Ishan Sinha, a curious mind with a passion for technology and creating meaningful digital experiences. I'm currently pursuing my B.Tech at Oriental College of Technology, Bhopal, where I've been exploring the intersection of creativity and code.",
+    "I'm Ishan, a full-stack developer from Bhopal with a B.Tech in Information Technology (2025). I've shipped three production web and mobile apps with Java, Spring Boot, React and Capacitor, and I also build responsive websites and Next.js and MERN apps. I care about the details that make a site fast, easy to use and easy to find. Whether you need a new website, a redesign or a fix, I'd love to help.",
   avatarUrl: "/myPhoto.jpg",
+  availability: {
+    status: "Available for new projects",
+    responseTime: "I usually reply within 24 hours",
+  },
   skills: [
+    "Java",
+    "Spring Boot",
+    "React",
+    "Next.js",
+    "JavaScript",
     "HTML",
     "CSS",
     "Tailwind CSS",
-    "Javascript",
+    "shadcn/ui",
+    "Capacitor",
     "Node.js",
     "Express",
+    "SQL",
     "MongoDB",
-    "MySQL",
-    "API",
-    "C++",
-    "Java",
-    "Data Structure",
-    "OOP",
-    "Git",
-    "Intelli J",
-    "Github",
-    "VS Code",
+    "Supabase",
+    "REST APIs",
+    "Razorpay",
+    "Git & GitHub",
     "Postman",
-   
+    "Responsive design",
   ],
+  // Dock links. `sections`: the page sections that highlight the link while in view.
   navbar: [
-    { href: "/", icon: HomeIcon, label: "Home" },
-    // { href: "/blog", icon: NotebookIcon, label: "Blog" },
+    { href: "#hero", icon: HomeIcon, label: "Home", sections: ["hero", "about"] },
+    { href: "#services", icon: LayersIcon, label: "Services", sections: ["services"] },
+    { href: "#projects", icon: BriefcaseIcon, label: "Work", sections: ["projects", "process"] },
+    { href: "#contact", icon: MailIcon, label: "Contact", sections: ["faq", "contact"] },
   ],
   contact: {
     email: "iishansinhaa@gmail.com",
-    tel: "+91 7987492361",
+    // TODO(content): confirm this is your WhatsApp number (country code + number, digits only).
+    whatsapp: "917987492361",
+    // Optional booking link, e.g. "https://calendly.com/your-name/intro-call". Leave empty to hide the button.
+    calendly: "",
+    // Web3Forms access key for the contact form: get one free at https://web3forms.com by entering your email.
+    // It's designed to be public. While it's empty, the form offers WhatsApp, email and Gmail buttons instead of sending.
+    formAccessKey: "",
     social: {
       GitHub: {
         name: "GitHub",
         url: "https://github.com/17ishan",
         icon: Icons.github,
-
         navbar: true,
       },
       LinkedIn: {
         name: "LinkedIn",
         url: "https://www.linkedin.com/in/ishan-sinha-858097230/",
         icon: Icons.linkedin,
-
         navbar: true,
       },
-      X: {
-        name: "X",
-        url: "https://dub.sh/dillion-twitter",
-        icon: Icons.x,
-
-        navbar: false,
-      },
-      Youtube: {
-        name: "Youtube",
-        url: "https://dub.sh/dillion-youtube",
-        icon: Icons.youtube,
-        navbar: false,
-      },
-      email: {
-        name: "Send Email",
-        url: "#",
+      Email: {
+        name: "Email",
+        url: "mailto:iishansinhaa@gmail.com",
         icon: Icons.email,
-
-        navbar: true,
+        navbar: false,
       },
-    },
+    } satisfies Record<string, Social>,
   },
-
-  work: [
+  services,
+  process: [
     {
-      company: "Codsoft",
-      href: "https://www.linkedin.com/posts/ishan-sinha-858097230_certificate-activity-7105538964391915520-ClNe?utm_source=share&utm_medium=member_desktop&rcm=ACoAADmtTQQBFr8x9Ng3zT8cOYAZjLAwp5kIJys",
-      badges: [],
-      location: "Remote",
-      title: "Web Developer intern",
-      logoUrl: "/codsoftLogo.jpg",
-      start: "May 2021",
-      end: "Oct 2022",
+      title: "Discover",
       description:
-        "Implemented the Bitcoin discreet log contract (DLC) protocol specifications as an open source Typescript SDK. Dockerized all microservices and setup production kubernetes cluster. Architected a data lake using AWS S3 and Athena for historical backtesting of bitcoin trading strategies. Built a mobile app using react native and typescript.",
+        "We talk about your goals, audience and must-have features. You get a clear scope and timeline before any work starts.",
     },
     {
-      company: "Bharat Intern",
-      badges: [],
-      href: "https://www.linkedin.com/posts/ishan-sinha-858097230_offer-letter-of-bharat-intern-activity-7087433455080288256-RY6A?utm_source=share&utm_medium=member_desktop&rcm=ACoAADmtTQQBFr8x9Ng3zT8cOYAZjLAwp5kIJys",
-      location: "Remote",
-      title: "Web Developer intern",
-      logoUrl: "/BharatInternLogo.png",
-      start: "July 2023",
-      end: "August 2023",
+      title: "Design",
       description:
-        "Implemented a custom Kubernetes controller in Go to automate the deployment of MySQL and ProxySQL custom resources in order to enable 2,000+ internal developers to instantly deploy their app databases to production. Wrote several scripts in Go to automate MySQL database failovers while maintaining master-slave replication topologies and keeping Zookeeper nodes consistent with changes.",
+        "I plan the structure and look of your site so you can review and approve it before development.",
     },
     {
-      company: "MP Police",
-      href: "https://www.linkedin.com/posts/ishan-sinha-858097230_mppoliceinternship-lawenforcement-professionalgrowth-activity-7071545684755103744-jqyk?utm_source=share&utm_medium=member_desktop&rcm=ACoAADmtTQQBFr8x9Ng3zT8cOYAZjLAwp5kIJys",
-      badges: [],
-      location: "Bhopal, Madhya Pradesh",
-      title: "Cyber Security Intern",
-      logoUrl: "/MPpoliceLogo.png",
-      start: "May 2022",
-      end: "April 2023",
+      title: "Build",
       description:
-        "Interned with the MP Police Cyber Cell, assisting in real cybercrime investigations. Gained hands-on experience with digital forensics, cyber laws, and tools used for tracking and analyzing online threats.",
+        "I develop your site or app with regular updates and a live preview link you can check at any time.",
+    },
+    {
+      title: "Launch & support",
+      description:
+        "I deploy to your domain, hand everything over, and stay available for fixes and updates.",
     },
   ],
-
+  // TODO(content): review these answers so they match how you want to work.
+  faq: [
+    {
+      question: "How long does a project take?",
+      answer:
+        "A landing page usually takes 1–2 weeks and a multi-page business website 2–4 weeks. Web apps depend on the features, and you get a timeline before we start.",
+    },
+    {
+      question: "Do you work with clients outside India?",
+      answer:
+        "Yes. I work remotely with clients in India and abroad, communicate over email, WhatsApp or video calls, and adjust meeting times to your time zone.",
+    },
+    {
+      question: "Can I ask for changes?",
+      answer:
+        "Of course. Rounds of revisions are agreed as part of the scope, so you know exactly what's included before we begin.",
+    },
+    {
+      question: "Can you help with hosting and a domain?",
+      answer:
+        "Yes. I can deploy your site on Vercel, Netlify or your existing hosting and connect it to your domain.",
+    },
+    {
+      question: "Do you offer support after launch?",
+      answer:
+        "Yes. I fix any bugs in what I built and can take on ongoing updates whenever you need them.",
+    },
+    {
+      question: "How do we get started?",
+      answer:
+        "Send a message through the form below or on WhatsApp with a short description of your project, and I'll get back to you with next steps.",
+    },
+  ],
+  testimonials,
+  work,
   education: [
     {
       school: "Oriental College of Technology",
       href: "https://oriental.ac.in/oct-bhopal",
-      degree: "Bachelor of Technology",
+      degree: "B.Tech, Information Technology",
       logoUrl: "/OCTlogo.jpg",
       start: "2021",
       end: "2025",
     },
     {
-      school: "Mother Teresa senior secondary co-ed School ",
+      school: "Mother Teresa Senior Secondary School",
       href: "https://www.motherteresaschool.net/",
-      degree: "12th",
+      degree: "Class 12",
       logoUrl: "/mtsslogo.jpg",
       start: "2020",
       end: "2021",
     },
     {
-      school: "Mother Teresa senior secondary co-ed school ",
+      school: "Mother Teresa Senior Secondary School",
       href: "https://www.motherteresaschool.net/",
-      degree: "10th",
+      degree: "Class 10",
       logoUrl: "/mtsslogo.jpg",
       start: "2018",
       end: "2019",
     },
   ],
-  projects: [
-    {
-      title: "Call Ease",
-      href: "https://video-calling-web-app-call-ease-seven.vercel.app/",
-      dates: "April 2023 - September 2023",
-      active: true,
-      description:
-        "CallEase is a real-time video calling application built with React, Tailwind CSS, and Vite, utilizing a video calling API for seamless peer-to-peer communication. The project features a clean, responsive UI and allows users to initiate and join video calls effortlessly.",
-      technologies: [
-        "React Js",
-        "TailwindCSS",
-        "API",
-        "Vite",
-      ],
-      links: [
-        {
-          type: "Website",
-          href: "https://video-calling-web-app-call-ease-seven.vercel.app/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/17ishan/video-calling-web-app-CallEase.-",
-          icon: <Icons.github className="size-3" />,
-        },
-      ],
-      image: "",
-      video: "/callEase.mp4",
-    },
-    {
-      title: "Sky Caste",
-      href: "https://weather-app-two-mocha-94.vercel.app/",
-      dates: "Jan 2024 - Feb 2024",
-      active: true,
-      description:
-        "SkyCast is a sleek weather forecasting web app that provides real-time weather updates and 5-day forecasts based on user location or search input. Built with HTML, CSS, and JavaScript, it features a clean UI and uses a weather API for accurate data.",
-      technologies: [
-        "HTML",
-        "CSS",
-        "JavaScript",
-        "API"
-      ],
-      links: [
-        {
-          type: "Website",
-          href: "https://weather-app-two-mocha-94.vercel.app/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/17ishan/SkyCast",
-          icon: <Icons.github className="size-3" />,
-        },
-      ],
-      image: "",
-      video:
-        "/weather.mp4",
-    },
-    {
-      title: "Password Generator",
-      href: "https://password-generator-brown-gamma.vercel.app/",
-      dates: "June 2023 - July 2023",
-      active: true,
-      description:
-        "Password Generator is a simple yet powerful tool that creates secure, random passwords based on user-defined criteria. Built using HTML, CSS, and JavaScript, it allows customization of length and character types (uppercase, lowercase, numbers, symbols) to enhance password strength and security.",
-      technologies: [
-        "HTML",
-        "CSS",
-        "JavaScript",
-        "Magic UI",
-      ],
-      links: [
-        {
-          type: "Website",
-          href: "https://password-generator-brown-gamma.vercel.app/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/17ishan/Password-generator",
-          icon: <Icons.github className="size-3" />,
-        },
-      ],
-      image: "",
-      video: "/passWordGenerator.mp4",
-    },
-    
-    {
-      title: "Modern Chair",
-      href: "https://17ishan.github.io/Modern-Chair-website/",
-      dates: "April 2023 - March 2024",
-      active: true,
-      description:
-        "Modern Chair Website is a sleek, animated product showcase built using HTML, CSS, and JavaScript. It features smooth scroll-based animations, interactive IJI elements, and a minimalist design to highlight modern furniture aesthetics. Ideal for e-commerce or design portfolios.",
-      technologies: [
-        "HTML",
-        "CSS",
-        "Javscript",
-        "Animations",
-        "TailwindCSS",
-      ],
-      links: [
-        {
-          type: "Website",
-          href: "https://17ishan.github.io/Modern-Chair-website/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/17ishan/Modern-Chair-website",
-          icon: <Icons.github className="size-3" />,
-        },
-      ],
-      image: "",
-      video:
-        "/modernChair.mp4",
-    },
-  ],
-  hackathons: [
-    {
-      title: "Hack Western 5",
-      dates: "November 23rd - 25th, 2018",
-      location: "London, Ontario",
-      description:
-        "Developed a mobile application which delivered bedtime stories to children using augmented reality.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/hack-western.png",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2019/mlh-trust-badge-2019-white.svg",
-      links: [],
-    },
-    {
-      title: "Hack The North",
-      dates: "September 14th - 16th, 2018",
-      location: "Waterloo, Ontario",
-      description:
-        "Developed a mobile application which delivers university campus wide events in real time to all students.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/hack-the-north.png",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2019/mlh-trust-badge-2019-white.svg",
-      links: [],
-    },
-    {
-      title: "FirstNet Public Safety Hackathon",
-      dates: "March 23rd - 24th, 2018",
-      location: "San Francisco, California",
-      description:
-        "Developed a mobile application which communcicates a victims medical data from inside an ambulance to doctors at hospital.",
-      icon: "public",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/firstnet.png",
-      links: [],
-    },
-    {
-      title: "DeveloperWeek Hackathon",
-      dates: "February 3rd - 4th, 2018",
-      location: "San Francisco, California",
-      description:
-        "Developed a web application which aggregates social media data regarding cryptocurrencies and predicts future prices.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/developer-week.jpg",
-      links: [
-        {
-          title: "Github",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/cryptotrends/cryptotrends",
-        },
-      ],
-    },
-    {
-      title: "HackDavis",
-      dates: "January 20th - 21st, 2018",
-      location: "Davis, California",
-      description:
-        "Developed a mobile application which allocates a daily carbon emission allowance to users to move towards a sustainable environment.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/hack-davis.png",
-      win: "Best Data Hack",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2018/white.svg",
-      links: [
-        {
-          title: "Devpost",
-          icon: <Icons.globe className="h-4 w-4" />,
-          href: "https://devpost.com/software/my6footprint",
-        },
-        {
-          title: "ML",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/Wallet6/my6footprint-machine-learning",
-        },
-        {
-          title: "iOS",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/Wallet6/CarbonWallet",
-        },
-        {
-          title: "Server",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/Wallet6/wallet6-server",
-        },
-      ],
-    },
-    {
-      title: "ETH Waterloo",
-      dates: "October 13th - 15th, 2017",
-      location: "Waterloo, Ontario",
-      description:
-        "Developed a blockchain application for doctors and pharmacists to perform trustless transactions and prevent overdosage in patients.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/eth-waterloo.png",
-      links: [
-        {
-          title: "Organization",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/ethdocnet",
-        },
-      ],
-    },
-    {
-      title: "Hack The North",
-      dates: "September 15th - 17th, 2017",
-      location: "Waterloo, Ontario",
-      description:
-        "Developed a virtual reality application allowing users to see themselves in third person.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/hack-the-north.png",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2017/white.svg",
-      links: [
-        {
-          title: "Streamer Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/justinmichaud/htn2017",
-        },
-        {
-          title: "Client Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/dillionverma/RTSPClient",
-        },
-      ],
-    },
-    {
-      title: "Hack The 6ix",
-      dates: "August 26th - 27th, 2017",
-      location: "Toronto, Ontario",
-      description:
-        "Developed an open platform for people shipping items to same place to combine shipping costs and save money.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/hack-the-6ix.jpg",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2017/white.svg",
-      links: [
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/ShareShip/ShareShip",
-        },
-        {
-          title: "Site",
-          icon: <Icons.globe className="h-4 w-4" />,
-          href: "https://share-ship.herokuapp.com/",
-        },
-      ],
-    },
-    {
-      title: "Stupid Hack Toronto",
-      dates: "July 23rd, 2017",
-      location: "Toronto, Ontario",
-      description:
-        "Developed a chrome extension which tracks which facebook profiles you have visited and immediately texts your girlfriend if you visited another girls page.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/stupid-hackathon.png",
-      links: [
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/nsagirlfriend/nsagirlfriend",
-        },
-      ],
-    },
-    {
-      title: "Global AI Hackathon - Toronto",
-      dates: "June 23rd - 25th, 2017",
-      location: "Toronto, Ontario",
-      description:
-        "Developed a python library which can be imported to any python game and change difficulty of the game based on real time emotion of player. Uses OpenCV and webcam for facial recognition, and a custom Machine Learning Model trained on a [Kaggle Emotion Dataset](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/leaderboard) using [Tensorflow](https://www.tensorflow.org/Tensorflow) and [Keras](https://keras.io/). This project recieved 1st place prize at the Global AI Hackathon - Toronto and was also invited to demo at [NextAI Canada](https://www.nextcanada.com/next-ai).",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/global-ai-hackathon.jpg",
-      win: "1st Place Winner",
-      links: [
-        {
-          title: "Article",
-          icon: <Icons.globe className="h-4 w-4" />,
-          href: "https://syncedreview.com/2017/06/26/global-ai-hackathon-in-toronto/",
-        },
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/TinySamosas/",
-        },
-      ],
-    },
-    {
-      title: "McGill AI for Social Innovation Hackathon",
-      dates: "June 17th - 18th, 2017",
-      location: "Montreal, Quebec",
-      description:
-        "Developed realtime facial microexpression analyzer using AI",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/ai-for-social-good.jpg",
-      links: [],
-    },
-    {
-      title: "Open Source Circular Economy Days Hackathon",
-      dates: "June 10th, 2017",
-      location: "Toronto, Ontario",
-      description:
-        "Developed a custom admin interface for food waste startup <a href='http://genecis.co/'>Genecis</a> to manage their data and provide analytics.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/open-source-circular-economy-days.jpg",
-      win: "1st Place Winner",
-      links: [
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/dillionverma/genecis",
-        },
-      ],
-    },
-    {
-      title: "Make School's Student App Competition 2017",
-      dates: "May 19th - 21st, 2017",
-      location: "International",
-      description: "Improved PocketDoc and submitted to online competition",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/make-school-hackathon.png",
-      win: "Top 10 Finalist | Honourable Mention",
-      links: [
-        {
-          title: "Medium Article",
-          icon: <Icons.globe className="h-4 w-4" />,
-          href: "https://medium.com/make-school/the-winners-of-make-schools-student-app-competition-2017-a6b0e72f190a",
-        },
-        {
-          title: "Devpost",
-          icon: <Icons.globe className="h-4 w-4" />,
-          href: "https://devpost.com/software/pocketdoc-react-native",
-        },
-        {
-          title: "YouTube",
-          icon: <Icons.youtube className="h-4 w-4" />,
-          href: "https://www.youtube.com/watch?v=XwFdn5Rmx68",
-        },
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/dillionverma/pocketdoc-react-native",
-        },
-      ],
-    },
-    {
-      title: "HackMining",
-      dates: "May 12th - 14th, 2017",
-      location: "Toronto, Ontario",
-      description: "Developed neural network to optimize a mining process",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/hack-mining.png",
-      links: [],
-    },
-    {
-      title: "Waterloo Equithon",
-      dates: "May 5th - 7th, 2017",
-      location: "Waterloo, Ontario",
-      description:
-        "Developed Pocketdoc, an app in which you take a picture of a physical wound, and the app returns common solutions or cures to the injuries or diseases.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/waterloo-equithon.png",
-      links: [
-        {
-          title: "Devpost",
-          icon: <Icons.globe className="h-4 w-4" />,
-          href: "https://devpost.com/software/pocketdoc-react-native",
-        },
-        {
-          title: "YouTube",
-          icon: <Icons.youtube className="h-4 w-4" />,
-          href: "https://www.youtube.com/watch?v=XwFdn5Rmx68",
-        },
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/dillionverma/pocketdoc-react-native",
-        },
-      ],
-    },
-    {
-      title: "SpaceApps Waterloo",
-      dates: "April 28th - 30th, 2017",
-      location: "Waterloo, Ontario",
-      description:
-        "Developed Earthwatch, a web application which allows users in a plane to virtually see important points of interest about the world below them. They can even choose to fly away from their route and then fly back if they choose. Special thanks to CesiumJS for providing open source world and plane models.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/space-apps.png",
-      links: [
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/dillionverma/earthwatch",
-        },
-      ],
-    },
-    {
-      title: "MHacks 9",
-      dates: "March 24th - 26th, 2017",
-      location: "Ann Arbor, Michigan",
-      description:
-        "Developed Super Graphic Air Traffic, a VR website made to introduce people to the world of air traffic controlling. This project was built completely using THREE.js as well as a node backend server.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/mhacks-9.png",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2017/white.svg",
-      links: [
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/dillionverma/threejs-planes",
-        },
-      ],
-    },
-    {
-      title: "StartHacks I",
-      dates: "March 4th - 5th, 2017",
-      location: "Waterloo, Ontario",
-      description:
-        "Developed at StartHacks 2017, Recipic is a mobile app which allows you to take pictures of ingredients around your house, and it will recognize those ingredients using ClarifAI image recognition API and return possible recipes to make. Recipic recieved 1st place at the hackathon for best pitch and hack.",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/starthacks.png",
-      win: "1st Place Winner",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2017/white.svg",
-      links: [
-        {
-          title: "Source (Mobile)",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/mattBlackDesign/recipic-ionic",
-        },
-        {
-          title: "Source (Server)",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/mattBlackDesign/recipic-rails",
-        },
-      ],
-    },
-    {
-      title: "QHacks II",
-      dates: "February 3rd - 5th, 2017",
-      location: "Kingston, Ontario",
-      description:
-        "Developed a mobile game which enables city-wide manhunt with random lobbies",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/qhacks.png",
-      mlh: "https://s3.amazonaws.com/logged-assets/trust-badge/2017/white.svg",
-      links: [
-        {
-          title: "Source (Mobile)",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/dillionverma/human-huntr-react-native",
-        },
-        {
-          title: "Source (API)",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/mattBlackDesign/human-huntr-rails",
-        },
-      ],
-    },
-    {
-      title: "Terrible Hacks V",
-      dates: "November 26th, 2016",
-      location: "Waterloo, Ontario",
-      description:
-        "Developed a mock of Windows 11 with interesting notifications and functionality",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/terrible-hacks-v.png",
-      links: [
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/justinmichaud/TerribleHacks2016-Windows11",
-        },
-      ],
-    },
-    {
-      title: "Portal Hackathon",
-      dates: "October 29, 2016",
-      location: "Kingston, Ontario",
-      description:
-        "Developed an internal widget for uploading assignments using Waterloo's portal app",
-      image:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/hackline/portal-hackathon.png",
-      links: [
-        {
-          title: "Source",
-          icon: <Icons.github className="h-4 w-4" />,
-          href: "https://github.com/UWPortalSDK/crowmark",
-        },
-      ],
-    },
-  ],
-  
-} as const;
+  projects,
+};

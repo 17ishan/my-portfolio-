@@ -13,8 +13,9 @@
       --popover: 0 0% 100%;
       --popover-foreground: 210 11.1% 3.53%;
 
-      --primary: 0 0% 9%;
-      --primary-foreground: 0 0% 98%;
+      /* Indigo accent (indigo-600): white text on it is 6.3:1. */
+      --primary: 243 75% 59%;
+      --primary-foreground: 0 0% 100%;
 
       --secondary: 0 0% 96.1%;
       --secondary-foreground: 0 0% 9%;
@@ -23,14 +24,17 @@
       --muted-foreground: 0 0% 45.1%;
 
       --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+      --accent-foreground: 0 0% 9%;
 
       --destructive: 0 84.2% 60.2%;
       --destructive-foreground: 0 0% 98%;
 
       --border: 0 0% 89.8%;
       --input: 0 0% 89.8%;
-      --ring: 0 0% 3.9%;
+      --ring: 243 75% 59%;
+
+      /* Accent for text and icons on the page background (6.3:1 on white). */
+      --highlight: 243 75% 59%;
 
       --radius: 0.5rem;
     }
@@ -45,8 +49,8 @@
       --popover: 210 11.1% 3.53%;
       --popover-foreground: 0 0% 98%;
 
-      --primary: 0 0% 98%;
-      --primary-foreground: 0 0% 9%;
+      --primary: 243 75% 59%;
+      --primary-foreground: 0 0% 100%;
 
       --secondary: 0 0% 14.9%;
       --secondary-foreground: 0 0% 98%;
@@ -62,12 +66,10 @@
 
       --border: 0 0% 14.9%;
       --input: 0 0% 14.9%;
-      --ring: 0 0% 83.1%;
-    }
-  .theme {
-        --animate-orbit: orbit calc(var(--duration)*1s) linear infinite;
-        --animate-grid: grid 15s linear infinite;
-        --animate-shine: shine var(--duration) infinite linear;
+      --ring: 234 89% 74%;
+
+      /* Lighter indigo (indigo-400) so accent text stays readable on the dark background. */
+      --highlight: 234 89% 74%;
     }
   }
 
@@ -78,103 +80,220 @@
     body {
       @apply bg-background text-foreground;
     }
-  }
-
-  h3 code {
-    @apply !text-lg md:!text-xl;
-  }
-
-  pre {
-    @apply !px-0 rounded-lg overflow-x-auto py-4
-  }
-
-  pre [data-line] {
-    @apply px-4
-  }
-
-  code {
-    @apply text-sm md:text-base !leading-loose;
-  }
-
-  pre > code {
-    counter-reset: line;
-  }
-
-  code[data-theme*=" "],
-  code[data-theme*=" "] span {
-    color: var(--shiki-light);
-    background-color: var(--shiki-light-bg);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    code[data-theme*=" "],
-    code[data-theme*=" "] span {
-      color: var(--shiki-dark);
-      background-color: var(--shiki-dark-bg);
+    /* Leave a little space above sections reached from the dock links. */
+    section[id] {
+      scroll-margin-top: 2rem;
     }
   }
 
-  code[data-line-numbers] {
-    counter-reset: line;
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
-  code[data-line-numbers] > [data-line]::before {
-    counter-increment: line;
-    content: counter(line);
-    @apply inline-block w-4 mr-4 text-right text-gray-500;
+  /* Set by SmoothCursor while the custom cursor is active, so the native cursor never shows alongside it. */
+  .custom-cursor,
+  .custom-cursor * {
+    cursor: none !important;
   }
 
-  code {
-    counter-reset: line;
+  /* Scroll reveal. The layout's <head> script adds html.reveal-on only when IntersectionObserver
+     exists and reduced motion isn't requested, so content is never hidden without JavaScript.
+     Only opacity and transform animate, which the browser can do off the main thread. */
+  .reveal-on [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal-on [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
+  }
+  @media print {
+    .reveal-on [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
   }
 
-  code > [data-line]::before {
-  counter-increment: line;
-  content: counter(line);
+  /* Soft indigo/violet glow behind the hero: gradients only (no blur filter), so it's cheap to draw. */
+  .hero-glow {
+    position: absolute;
+    inset: -9rem -12rem auto;
+    height: 34rem;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(38% 48% at 28% 42%, hsl(var(--primary) / 0.16), transparent 70%),
+      radial-gradient(34% 42% at 78% 30%, hsl(262 83% 66% / 0.13), transparent 70%);
+  }
+  .dark .hero-glow {
+    background:
+      radial-gradient(38% 48% at 28% 42%, hsl(var(--primary) / 0.26), transparent 70%),
+      radial-gradient(34% 42% at 78% 30%, hsl(262 83% 66% / 0.18), transparent 70%);
+  }
 
-  /* Other styling */
-  display: inline-block;
-  width: 1rem;
-  margin-right: 2rem;
-  text-align: right;
-  color: gray;
-}
-
-code[data-line-numbers-max-digits="2"] > [data-line]::before {
-  width: 2rem;
-}
-
-code[data-line-numbers-max-digits="3"] > [data-line]::before {
-  width: 3rem;
-}
-
-@theme inline {
-  @keyframes orbit {
-  0% {
-    transform: rotate(calc(var(--angle) * 1deg)) translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg));
-        }
-  100% {
-    transform: rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * 1px)) rotate(calc((var(--angle) * -1deg) - 360deg));
-        }
+  /* Adapted from React Bits "SpotlightCard": a soft accent light follows the cursor.
+     The position comes from CSS variables set on pointer move; the light sits between the
+     card's background and its content, and only appears on devices that can hover. */
+  .spotlight-card {
+    position: relative;
+    isolation: isolate;
+  }
+  .spotlight-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      380px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+      hsl(var(--highlight) / 0.14),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  @media (hover: hover) {
+    .spotlight-card:hover::before {
+      opacity: 1;
     }
-  @keyframes grid {
-  0% {
-    transform: translateY(-50%);
-        }
-  100% {
-    transform: translateY(0);
-        }
-    }
-  @keyframes shine {
-  0% {
-    background-position: 0% 0%;
-        }
-  50% {
-    background-position: 100% 100%;
-        }
-  to {
-    background-position: 0% 0%;
-        }
-    }
-}
+  }
 
+  /* Adapted from React Bits "GlareHover": a light band sweeps across the image when the card is
+     hovered. Rewritten with a transform (compositor-only) instead of animating background-position. */
+  .glare-hover {
+    position: relative;
+    overflow: hidden;
+  }
+  .glare-hover::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    pointer-events: none;
+    background: linear-gradient(
+      -45deg,
+      transparent 42%,
+      hsl(0 0% 100% / 0.38) 50%,
+      transparent 58%
+    );
+    transform: translate(-60%, -60%);
+    transition: transform 0.7s ease;
+  }
+  @media (hover: hover) {
+    .group:hover .glare-hover::after {
+      transform: translate(60%, 60%);
+    }
+  }
+
+  /* Adapted from React Bits "StarBorder": two soft lights travel along the button's edge. */
+  .star-border-light {
+    position: absolute;
+    z-index: 0;
+    width: 300%;
+    height: 50%;
+    border-radius: 9999px;
+    opacity: 0.7;
+    pointer-events: none;
+    background: radial-gradient(circle, hsl(var(--highlight)), transparent 10%);
+    animation: star-movement-bottom 6s linear infinite alternate;
+  }
+  .star-border-bottom {
+    bottom: -11px;
+    right: -250%;
+  }
+  .star-border-top {
+    top: -10px;
+    left: -250%;
+    animation-name: star-movement-top;
+  }
+  @keyframes star-movement-bottom {
+    0% {
+      transform: translate(0%, 0%);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-100%, 0%);
+      opacity: 0;
+    }
+  }
+  @keyframes star-movement-top {
+    0% {
+      transform: translate(0%, 0%);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(100%, 0%);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .star-border-light {
+      animation: none;
+      opacity: 0;
+    }
+  }
+
+  /* Scroll-progress bar and hero parallax: pure CSS scroll-driven animations (no JavaScript).
+     Browsers without support, or visitors who prefer reduced motion, get a static page. */
+  .scroll-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    height: 2px;
+    background: hsl(var(--primary));
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    pointer-events: none;
+  }
+  @keyframes scroll-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @keyframes hero-drift-slow {
+    to {
+      transform: translateY(64px) scale(0.92);
+    }
+  }
+  @keyframes hero-drift-fade {
+    to {
+      transform: translateY(32px);
+      opacity: 0.15;
+    }
+  }
+  @keyframes hero-glow-drift {
+    to {
+      transform: translateY(140px) scale(1.12);
+      opacity: 0.3;
+    }
+  }
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .scroll-progress {
+        animation: scroll-progress linear both;
+        animation-timeline: scroll(root);
+      }
+      /* Each hero element follows its own position: it drifts as it scrolls out of the top. */
+      .hero-parallax-slow,
+      .hero-parallax-fade {
+        animation: hero-drift-slow linear both;
+        animation-timeline: view();
+        animation-range: exit;
+      }
+      .hero-parallax-fade {
+        animation-name: hero-drift-fade;
+      }
+      /* The glow follows the page scroll over the first 600px. */
+      .hero-glow {
+        animation: hero-glow-drift linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 600px;
+      }
+    }
+  }
