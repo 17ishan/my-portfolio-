@@ -114,7 +114,10 @@ const jsonLd = {
       sameAs: Object.values(DATA.contact.social)
         .map((social) => social.url)
         .filter((url) => url.startsWith("http")),
-      knowsAbout: DATA.skills,
+      knowsAbout: [
+        ...DATA.skills.map((skill) => skill.name),
+        ...DATA.otherSkills,
+      ],
     },
     {
       "@type": "ProfessionalService",
@@ -148,7 +151,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: revealInitScript }} />
       </head>
@@ -165,7 +168,7 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
           }}
         />
-        <ThemeProvider attribute="class" defaultTheme="light">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <TooltipProvider delayDuration={0}>
             <SmoothCursor />
             <Toaster position="top-right" />

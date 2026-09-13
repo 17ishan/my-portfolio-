@@ -11,7 +11,7 @@ import { ResumeDownload } from "@/components/resumepdf";
 import { Reveal } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
 import { ServicesSection } from "@/components/services-section";
-import { IconCloudDemo } from "@/components/skills2";
+import { SkillsSection } from "@/components/skills-section";
 import { TestimonialsSection } from "@/components/testimonials-section";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -159,24 +159,7 @@ export default function Page() {
         ))}
       </section>
 
-      <section id="skills" className="flex flex-col gap-y-3">
-        <Reveal delay={REVEAL_DELAY}>
-          <h2 className="text-xl font-bold">Skills</h2>
-        </Reveal>
-        <div className="flex flex-wrap gap-1.5">
-          {DATA.skills.map((skill, id) => (
-            <Reveal key={skill} delay={REVEAL_DELAY + id * 0.03}>
-              <Badge
-                variant="outline"
-                className="font-medium transition-colors hover:border-highlight/40 hover:text-highlight"
-              >
-                {skill}
-              </Badge>
-            </Reveal>
-          ))}
-        </div>
-        <IconCloudDemo />
-      </section>
+      <SkillsSection />
 
       <TestimonialsSection />
 

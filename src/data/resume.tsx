@@ -58,6 +58,12 @@ export interface WorkItem {
   description: string;
 }
 
+export interface Skill {
+  name: string;
+  /** File name in /public/logos (without .svg). */
+  logo: string;
+}
+
 export interface Testimonial {
   quote: string;
   name: string;
@@ -260,6 +266,32 @@ const testimonials: Testimonial[] = [
   // { quote: "Ishan rebuilt our website in two weeks…", name: "Name Surname", role: "Owner, Company" },
 ];
 
+// Shown as logo tiles in the Skills section, in this order (main stack first).
+// Logos live in /public/logos (monochrome SVGs from simple-icons).
+const skills: Skill[] = [
+  { name: "Java", logo: "java" },
+  { name: "Spring Boot", logo: "springboot" },
+  { name: "React", logo: "react" },
+  { name: "Next.js", logo: "nextdotjs" },
+  { name: "Node.js", logo: "nodedotjs" },
+  { name: "JavaScript", logo: "javascript" },
+  { name: "Express", logo: "express" },
+  { name: "SQL", logo: "mysql" },
+  { name: "MongoDB", logo: "mongodb" },
+  { name: "Supabase", logo: "supabase" },
+  { name: "Capacitor", logo: "capacitor" },
+  { name: "Tailwind CSS", logo: "tailwindcss" },
+  { name: "shadcn/ui", logo: "shadcnui" },
+  { name: "Razorpay", logo: "razorpay" },
+  { name: "Git & GitHub", logo: "github" },
+  { name: "Postman", logo: "postman" },
+  { name: "HTML", logo: "html5" },
+  { name: "CSS", logo: "css" },
+];
+
+// Skills without a logo, listed as text under the grid.
+const otherSkills = ["REST APIs", "Responsive design"];
+
 export const DATA = {
   name: "Ishan Sinha",
   initials: "IS",
@@ -276,28 +308,8 @@ export const DATA = {
     status: "Available for new projects",
     responseTime: "I usually reply within 24 hours",
   },
-  skills: [
-    "Java",
-    "Spring Boot",
-    "React",
-    "Next.js",
-    "JavaScript",
-    "HTML",
-    "CSS",
-    "Tailwind CSS",
-    "shadcn/ui",
-    "Capacitor",
-    "Node.js",
-    "Express",
-    "SQL",
-    "MongoDB",
-    "Supabase",
-    "REST APIs",
-    "Razorpay",
-    "Git & GitHub",
-    "Postman",
-    "Responsive design",
-  ],
+  skills,
+  otherSkills,
   // Dock links. `sections`: the page sections that highlight the link while in view.
   navbar: [
     { href: "#hero", icon: HomeIcon, label: "Home", sections: ["hero", "about"] },

@@ -239,6 +239,25 @@
     }
   }
 
+  /* Skills grid: tiles scale up as they reveal, then lift with an accent glow on hover.
+     Only transform, colour and shadow change, so the browser can animate them cheaply. */
+  .skill-tile {
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .reveal-on [data-reveal]:not([data-revealed]) .skill-tile {
+    transform: scale(0.94);
+  }
+  @media (hover: hover) {
+    .skill-tile:hover {
+      transform: translateY(-3px);
+      border-color: hsl(var(--highlight) / 0.5);
+      box-shadow: 0 10px 24px -14px hsl(var(--primary) / 0.55);
+    }
+  }
+
   /* Scroll-progress bar and hero parallax: pure CSS scroll-driven animations (no JavaScript).
      Browsers without support, or visitors who prefer reduced motion, get a static page. */
   .scroll-progress {
